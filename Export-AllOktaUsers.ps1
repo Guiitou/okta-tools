@@ -15,11 +15,11 @@ do {
     $result = Invoke-WebRequest -Uri $url -Headers $header -UseBasicParsing
     $json = $result.Content | convertfrom-json
     $Users += $json
-    $next = (($result.Headers.Link -split "`n")[1] -replace "[\<\>]" -split ";")[0]
+    $next = (($result.Headers.Link -split ",")[1] -replace "[\<\>]" -split ";")[0]
     $url = $next
 
 }
-while ($result.Headers.Link[1] -match "next")
+while (-Not($result.Headers.Link[1] -match $next))
 
 $Users | Foreach-object {
     
@@ -38,6 +38,6 @@ $Users | Foreach-object {
     PasswordChanged = $_.passwordChanged
     Error = if ($_ -eq $null){"Something wrong"}else{}
     }
-} | Export-Csv ./AllUsers-Feb2019.csv -Force
+} | Export-Csv ./AllUsers-Mar2019.csv -Force
 
 #Write-Output "($Users).count:OK"
